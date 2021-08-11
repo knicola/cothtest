@@ -1,0 +1,15 @@
+{
+  "name": "@co/eslint-config",
+  "version": "0.1.0",
+  "description": "CO ESLint default config",
+  "main": "index.js",
+  "author": "@knicola",
+  "license": "UNLICENSED",
+  "scripts": {
+    "test": "",
+    "build": ""
+  },
+  "peerDependencies": {
+    "eslint": ">= 7"
+  }
+}

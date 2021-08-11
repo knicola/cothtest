@@ -1,0 +1,44 @@
+{
+  "name": "@co/api-server",
+  "version": "0.1.0",
+  "description": "CO Backend Challenge",
+  "author": "@knicola",
+  "license": "UNLICENSED",
+  "private": true,
+  "main": "src/index.js",
+  "files": ["src/"],
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "nodemon src/index.js",
+    "lint": "eslint src",
+    "test": "jest --verbose",
+    "test:unit": "jest --testNamePattern='\\[unit\\]' --verbose",
+    "test:intgr": "jest --testNamePattern='\\[intgr\\]' --verbose",
+    "coverage": "jest --coverage",
+    "build": "npm run lint && npm run test"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^10.0.0",
+    "express": "^4.17.1",
+    "helmet": "^4.6.0",
+    "knex": "^0.95.9",
+    "luxon": "^2.0.1",
+    "morgan": "^1.10.0",
+    "pg": "^8.7.1",
+    "redis": "^3.1.2",
+    "uuid": "^8.3.2",
+    "winston": "^3.3.3",
+    "yup": "^0.32.9",
+    "lodash": "^4.17.21"
+  },
+  "devDependencies": {
+    "@co/eslint-config": "workspace:~0.1.0",
+    "eslint": "^7.32.0",
+    "jest": "^27.0.6",
+    "nodemon": "^2.0.12",
+    "supertest": "^6.1.4",
+    "@types/jest": "^26.0.24",
+    "faker": "^5.5.3"
+  }
+}
