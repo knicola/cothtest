@@ -1,0 +1,31 @@
+version: "3.7"
+services:
+    postgres:
+        environment:
+            POSTGRES_DB: ${POSTGRES_DB}
+            POSTGRES_USER: ${POSTGRES_USER}
+            POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+        ports:
+            - ${POSTGRES_PORT}:5432
+    postgres-test:
+        build: ./docker/postgresql
+        hostname: postgres-test
+        user: postgres
+        environment:
+            POSTGRES_DB: ${POSTGRES_DB}
+            POSTGRES_USER: ${POSTGRES_USER}
+            POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+        ports:
+            - ${POSTGRES_TEST_PORT}:5432
+    redis:
+        ports:
+            - ${REDIS_PORT}:6379
+    api:
+        build:
+            context: .
+            target: base
+        user: node
+        working_dir: /app/services/api-server
+        command: sh -c "wait-for postgres:5432 -- npx knex migrate:latest && npm run dev"
+        volumes:
+            - ./:/app

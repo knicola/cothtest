@@ -1,0 +1,50 @@
+version: "3.7"
+services:
+    nginx:
+        build:  ./docker/nginx
+        hostname: nginx
+        ports:
+            - 80:80
+            - 443:443
+        healthcheck:
+            test: curl -f http://localhost/healthcheck || exit 1
+            timeout: 45s
+            interval: 10s
+            retries: 3
+        networks:
+            - nginx_net
+    postgres:
+        build: ./docker/postgresql
+        hostname: postgres
+        user: postgres
+        healthcheck:
+            test: pg_isready
+            timeout: 45s
+            interval: 10s
+            retries: 3
+        networks:
+            - api_net
+    redis:
+        build: ./docker/redis
+        hostname: redis
+        user: redis
+        healthcheck:
+            test: redis-cli ping || exit 1
+            timeout: 45s
+            interval: 10s
+            retries: 3
+        networks:
+            - api_net
+    api:
+        hostname: api
+        depends_on:
+            - postgres
+            - redis
+        networks:
+            - co_net
+            - api_net
+            - nginx_net
+networks:
+    co_net:
+    nginx_net:
+    api_net:
