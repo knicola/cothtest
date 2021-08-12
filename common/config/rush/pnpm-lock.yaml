@@ -5,11 +5,25 @@ importers:
   .:
     specifiers: {}
 
+  ../../libraries/app-config:
+    specifiers:
+      '@co/eslint-config': workspace:~0.1.0
+      config: ^3.3.6
+      dotenv: ^10.0.0
+      eslint: ^7.32.0
+    dependencies:
+      config: 3.3.6
+      dotenv: 10.0.0
+    devDependencies:
+      '@co/eslint-config': link:../eslint-config
+      eslint: 7.32.0
+
   ../../libraries/eslint-config:
     specifiers: {}
 
   ../../services/api-server:
     specifiers:
+      '@co/app-config': workspace:*
       '@co/eslint-config': workspace:~0.1.0
       '@types/jest': ^26.0.24
       cors: ^2.8.5
@@ -31,6 +45,7 @@ importers:
       winston: ^3.3.3
       yup: ^0.32.9
     dependencies:
+      '@co/app-config': link:../../libraries/app-config
       cors: 2.8.5
       dotenv: 10.0.0
       express: 4.17.1
@@ -1303,6 +1318,13 @@ packages:
   /concat-map/0.0.1:
     resolution: {integrity: sha1-2Klr13/Wjfd5OnMDajug1UBdR3s=}
     dev: true
+
+  /config/3.3.6:
+    resolution: {integrity: sha512-Hj5916C5HFawjYJat1epbyY2PlAgLpBtDUlr0MxGLgo3p5+7kylyvnRY18PqJHgnNWXcdd0eWDemT7eYWuFgwg==}
+    engines: {node: '>= 10.0.0'}
+    dependencies:
+      json5: 2.2.0
+    dev: false
 
   /configstore/5.0.1:
     resolution: {integrity: sha512-aMKprgk5YhBNyH25hj8wGt2+D52Sw1DRRIzqBwLp2Ya9mFmY8KPvvtvmna8SxVR9JMZ4kzMD68N22vlaRpkeFA==}
@@ -2915,7 +2937,6 @@ packages:
     hasBin: true
     dependencies:
       minimist: 1.2.5
-    dev: true
 
   /keyv/3.1.0:
     resolution: {integrity: sha512-9ykJ/46SN/9KPM/sichzQ7OvXyGDYKGTaDlKMGCAlg2UK8KRy4jb0d8sFc+0Tt0YYnThq8X2RZgCg74RPxgcVA==}
@@ -3135,7 +3156,6 @@ packages:
 
   /minimist/1.2.5:
     resolution: {integrity: sha512-FM9nNUYrRBAELZQT3xeZQ7fmMOBg6nWNmJKTcgsJeaLstP/UODVpGsr5OhXhhXg6f+qtJ8uiZ+PUxkDWcgIXLw==}
-    dev: true
 
   /morgan/1.10.0:
     resolution: {integrity: sha512-AbegBVI4sh6El+1gNwvD5YIck7nSA36weD7xvIxG4in80j/UoK8AEGaWnnz8v1GxonMCltmlNs5ZKbGvl9b1XQ==}

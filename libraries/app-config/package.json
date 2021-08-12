@@ -1,0 +1,23 @@
+{
+  "name": "@co/app-config",
+  "version": "0.1.0",
+  "description": "CO config library",
+  "author": "@knicola",
+  "license": "UNLICENSED",
+  "main": "src/index.js",
+  "files": ["src/"],
+  "private": true,
+  "scripts": {
+    "test": "",
+    "lint": "eslint ./src",
+    "build": "npm run lint"
+  },
+  "dependencies": {
+    "config": "^3.3.6",
+    "dotenv": "^10.0.0"
+  },
+  "devDependencies": {
+    "@co/eslint-config": "workspace:~0.1.0",
+    "eslint": "^7.32.0"
+  }
+}

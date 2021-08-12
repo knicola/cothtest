@@ -399,6 +399,11 @@
             "packageName": "@co/eslint-config",
             "projectFolder": "libraries/eslint-config",
             "shouldPublish": false
+        },
+        {
+            "packageName": "@co/app-config",
+            "projectFolder": "libraries/app-config",
+            "shouldPublish": false
         }      
     ]
   }
