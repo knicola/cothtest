@@ -1,6 +1,8 @@
 'use strict'
 
+// TODO: eliminate db module
 const db = require('../database')
+const Exam = require('../models/exam')
 
 /**
  * @typedef {object} ExamRecord
@@ -13,7 +15,7 @@ const db = require('../database')
  * @returns {Promise<ExamRecord[]>} List of Exam records
  */
 function create(input) {
-    return db('exams').insert(input).returning('*')
+    return Exam.query().insert(input).returning('*')
 }
 
 /**
@@ -23,7 +25,7 @@ function create(input) {
  * @returns {Promise<ExamRecord>} Exam record
  */
 function findById(examId) {
-    return db('exams').where({ id: examId }).first()
+    return Exam.query().where('id', examId).withGraphFetched('questions').first()
 }
 
 /**

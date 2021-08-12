@@ -1,6 +1,6 @@
 'use strict'
 
-const db = require('../database')
+const Taker = require('../models/taker')
 
 /**
  * @typedef {object} TakerRecord
@@ -15,7 +15,7 @@ const db = require('../database')
  * @returns {Promise<array>} List of taker records
  */
 async function create(takers) {
-    return await db('takers').insert(takers).returning('*')
+    return await Taker.query().insertAndFetch(takers)
 }
 
 /**
@@ -25,7 +25,7 @@ async function create(takers) {
  * @returns {Promise<TakerRecord>} Taker record
  */
 async function findById(id) {
-    return db('takers').where('id', id).first()
+    return Taker.query().where('id', id).first()
 }
 
 /**
@@ -35,7 +35,7 @@ async function findById(id) {
  * @returns {Promise<TakerRecord>} Taker record
  */
 async function findByEmail(email) {
-    return db('takers').where('email', email).first()
+    return Taker.query().where('email', email).first()
 }
 
 /**
@@ -45,7 +45,7 @@ async function findByEmail(email) {
  * @returns {Promise<TakerRecord>} Taker record
  */
 async function findOrCreate(takerInfo) {
-    return await findByEmail(takerInfo.email) || (await create(takerInfo))[0]
+    return await findByEmail(takerInfo.email) || await create(takerInfo)
 }
 
 module.exports = {

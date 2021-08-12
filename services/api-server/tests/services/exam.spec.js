@@ -2,6 +2,7 @@
 
 const faker = require('faker')
 const db = require('../../src/database')
+const Exam = require('../../src/models/exam')
 const examService = require('../../src/services/exam')
 
 describe('[intgr] services/taker.js', () => {
@@ -12,7 +13,7 @@ describe('[intgr] services/taker.js', () => {
                 name: faker.datatype.string('20'),
             }
 
-            const [insertRes] = await examService.create(record)
+            const insertRes = await examService.create(record)
             expect(insertRes).toMatchObject(record)
             expect(insertRes).toHaveProperty('id')
             expect(insertRes).toHaveProperty('created_at')
@@ -26,8 +27,9 @@ describe('[intgr] services/taker.js', () => {
         it('should retrieve a record using the given id', async () => {
             const record = {
                 name: faker.datatype.string('20'),
+                questions: [],
             }
-            const [insertRes] = await db('exams').insert(record).returning('*')
+            const insertRes = await Exam.query().insertGraphAndFetch(record)
 
             const res = await examService.findById(insertRes.id)
 
@@ -39,7 +41,7 @@ describe('[intgr] services/taker.js', () => {
             const examRecord = {
                 name: faker.datatype.string('20'),
             }
-            const [examRes] = await db('exams').insert(examRecord).returning('*')
+            const examRes = await Exam.query().insertAndFetch(examRecord)
             const questionRecords = Array.from({ length: 2 }, () => {
                 return {
                     exam_id: examRes.id,

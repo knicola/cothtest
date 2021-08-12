@@ -1,17 +1,17 @@
 'use strict'
 
-const db = require('../database')
+const Assessment = require('../models/assessment')
 const uuid = require('uuid')
 
 /**
- * Create new Assessment record(s)
+ * Create new Assessment record
  *
  * @param {string|number} examId Exam id
  * @param {string|number} takerId Taker's id
- * @returns {Promise<any>} List of Assessment records
+ * @returns {Promise<any>} Assessment record
  */
 async function create(examId, takerId) {
-    return await db('assessments').insert({
+    return Assessment.query().insert({
         exam_id: examId,
         taker_id: takerId,
         session: uuid.v4(),
@@ -25,7 +25,7 @@ async function create(examId, takerId) {
  * @returns {Promise<any>} Assessment record
  */
 function findBySession(session) {
-    return db('assessments').where('session', session).first()
+    return Assessment.query().where('session', session).first()
 }
 
 module.exports = {

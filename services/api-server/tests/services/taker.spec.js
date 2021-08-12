@@ -1,11 +1,11 @@
 'use strict'
 
 const faker = require('faker')
-const db = require('../../src/database')
+const Taker = require('../../src/models/taker')
 const takerService = require('../../src/services/taker')
 
 describe('[intgr] services/taker.js', () => {
-    afterAll(async () => await db.destroy())
+    afterAll(async () => await Taker.knex().destroy())
     describe('.create()', () => {
         it('should insert a new record and return the result', async () => {
             const record = {
@@ -14,13 +14,13 @@ describe('[intgr] services/taker.js', () => {
                 email: faker.internet.email(),
             }
 
-            const [insertRes] = await takerService.create(record)
+            const insertRes = await takerService.create(record)
             expect(insertRes).toMatchObject(record)
             expect(insertRes).toHaveProperty('id')
             expect(insertRes).toHaveProperty('created_at')
             expect(insertRes).toHaveProperty('updated_at')
 
-            const selectRes = await db('takers').where('id', insertRes.id).first()
+            const selectRes = await Taker.query().where('id', insertRes.id).first()
             expect(selectRes).toEqual(insertRes)
         }) // test
     }) // group
@@ -31,7 +31,7 @@ describe('[intgr] services/taker.js', () => {
                 last_name: faker.name.lastName(),
                 email: faker.internet.email(),
             }
-            const [insertRes] = await db('takers').insert(record).returning('*')
+            const insertRes = await Taker.query().insertAndFetch(record)
 
             const res = await takerService.findById(insertRes.id)
 
@@ -45,7 +45,7 @@ describe('[intgr] services/taker.js', () => {
                 last_name: faker.name.lastName(),
                 email: faker.internet.email(),
             }
-            const [insertRes] = await db('takers').insert(record).returning('*')
+            const insertRes = await Taker.query().insertAndFetch(record)
             const res = await takerService.findByEmail(insertRes.email)
             expect(res).toEqual(insertRes)
         }) // test
@@ -58,10 +58,10 @@ describe('[intgr] services/taker.js', () => {
                 email: faker.internet.email(),
             }
 
-            const [insertRes] = await db('takers').insert(record).returning('*')
+            const insertRes = await Taker.query().insertAndFetch(record)
             const res = await takerService.findOrCreate(record)
 
-            const {count} = await db('takers').where('email', record.email).count().first()
+            const {count} = await Taker.query().where('email', record.email).count().first()
             expect(res).toEqual(insertRes)
             expect(count).toEqual('1')
         }) // test
@@ -71,13 +71,13 @@ describe('[intgr] services/taker.js', () => {
                 last_name: faker.name.lastName(),
                 email: faker.internet.email(),
             }
-            const {count: count0 } = await db('takers').where('email', record.email).count().first()
+            const {count: count0 } = await Taker.query().where('email', record.email).count().first()
             expect(count0).toEqual('0')
 
             const res = await takerService.findOrCreate(record)
 
-            const [selectRes] = await db('takers').where('email', record.email)
-            const {count: count1} = await db('takers').where('email', record.email).count().first()
+            const selectRes = await Taker.query().where('email', record.email).first()
+            const {count: count1} = await Taker.query().where('email', record.email).count().first()
             expect(res).toEqual(selectRes)
             expect(count1).toEqual('1')
         }) // test
