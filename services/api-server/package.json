@@ -31,7 +31,8 @@
     "winston": "^3.3.3",
     "yup": "^0.32.9",
     "lodash": "^4.17.21",
-    "@co/app-config": "workspace:*"
+    "@co/app-config": "workspace:*",
+    "objection": "~2.2.15"
   },
   "devDependencies": {
     "@co/eslint-config": "workspace:~0.1.0",
