@@ -26,6 +26,6 @@ services:
             target: base
         user: node
         working_dir: /app/services/api-server
-        command: sh -c "wait-for postgres:5432 -- npx knex migrate:latest && npm run dev"
+        command: sh -c "wait-for postgres:5432 -- npx knex migrate:latest && npx knex seed:run && npm run dev"
         volumes:
             - ./:/app
