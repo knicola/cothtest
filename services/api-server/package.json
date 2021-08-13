@@ -12,7 +12,7 @@
     "dev": "nodemon src/index.js",
     "lint": "eslint src",
     "test": "jest --verbose",
-    "test:unit": "jest --testNamePattern='\\[unit\\]' --verbose",
+    "test:unit": "jest --testNamePattern='\\[unit\\]' -c jest.unit.config.js --verbose",
     "test:intgr": "jest --testNamePattern='\\[intgr\\]' --verbose",
     "coverage": "jest --coverage",
     "build": "npm run lint && npm run test"
