@@ -9,9 +9,7 @@ describe('[intgr] services/taker.js', () => {
     afterAll(async () => await db.destroy())
     describe('.create()', () => {
         it('should insert a new record and return the result', async () => {
-            const record = {
-                name: faker.datatype.string('20'),
-            }
+            const record = { name: faker.datatype.string('20') }
 
             const insertRes = await examService.create(record)
             expect(insertRes).toMatchObject(record)
@@ -25,11 +23,8 @@ describe('[intgr] services/taker.js', () => {
     }) // group
     describe('.findById()', () => {
         it('should retrieve a record using the given id', async () => {
-            const record = {
-                name: faker.datatype.string('20'),
-                questions: [],
-            }
-            const insertRes = await Exam.query().insertGraphAndFetch(record)
+            const record = { name: faker.datatype.string('20') }
+            const insertRes = await Exam.query().insertAndFetch(record)
 
             const res = await examService.findById(insertRes.id)
 

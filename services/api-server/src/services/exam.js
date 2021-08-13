@@ -15,7 +15,7 @@ const Exam = require('../models/exam')
  * @returns {Promise<ExamRecord[]>} List of Exam records
  */
 function create(input) {
-    return Exam.query().insert(input).returning('*')
+    return Exam.query().insertAndFetch(input)
 }
 
 /**
@@ -25,7 +25,7 @@ function create(input) {
  * @returns {Promise<ExamRecord>} Exam record
  */
 function findById(examId) {
-    return Exam.query().where('id', examId).withGraphFetched('questions').first()
+    return Exam.query().findById(examId)
 }
 
 /**
