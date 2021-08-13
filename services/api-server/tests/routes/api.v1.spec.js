@@ -77,4 +77,139 @@ describe('[unit] API V1', () => {
             expect(res.body.data).toEqual('yolo-uuid')
         }) // test
     }) // group
+    describe('GET /assessment/:session/test', () => {
+        it('should fail with 404 if assessment is not found or is inactive', async () => {
+            assessmentService.findBySession.mockResolvedValue(undefined)
+            const session = faker.datatype.uuid()
+            const res = await request(app)
+                .get(`/api/v1/assessment/${session}/test`)
+                .set('Accept', 'application/json')
+
+            expect(assessmentService.findBySession).toBeCalledTimes(1)
+            expect(assessmentService.findBySession).toBeCalledWith(session)
+            expect(takerService.findById).toBeCalledTimes(0)
+            expect(res.body).toMatchObject({ status: 404, data: false })
+            expect(res.status).toBe(404)
+        }) // test
+        it('should retrieve the assessment', async () => {
+            const taker = {
+                id: faker.datatype.number(100),
+                first_name: faker.name.firstName(),
+                last_name: faker.name.lastName(),
+                email: faker.internet.email(),
+            }
+            const assessment = {
+                test: faker.datatype.string(10),
+                ing: faker.datatype.string(10),
+                taker_id: taker.id,
+            }
+            const session = faker.datatype.uuid()
+            assessmentService.isAccessible.mockReturnValue(true)
+            assessmentService.findBySession.mockResolvedValue({
+                ...assessment,
+                taker_id: taker.id,
+            })
+            takerService.findById.mockResolvedValue(taker)
+
+            const res = await request(app)
+                .get(`/api/v1/assessment/${session}/test`)
+                .set('Accept', 'application/json')
+                .expect(200)
+
+            expect(assessmentService.findBySession).toBeCalledTimes(1)
+            expect(assessmentService.findBySession).toBeCalledWith(session)
+            expect(takerService.findById).toBeCalledTimes(1)
+            expect(takerService.findById).toBeCalledWith(taker.id)
+            expect(res.body.data).toStrictEqual({
+                ...assessment,
+                taker,
+            })
+        }) // test
+    }) // group
+    describe('POST /assessment/:session/start', () => {
+        it('should fail with 404 if assessment is not found or is inactive', async () => {
+            const session = faker.datatype.uuid()
+            assessmentService.startBySession.mockResolvedValue(undefined)
+
+            const res = await request(app)
+                .post(`/api/v1/assessment/${session}/start`)
+                .set('Accept', 'application/json')
+
+            expect(assessmentService.startBySession).toBeCalledTimes(1)
+            expect(assessmentService.startBySession).toBeCalledWith(session)
+            expect(res.body).toMatchObject({ status: 404, data: false })
+            expect(res.status).toEqual(404)
+        }) // test
+        it('should start the assessment', async () => {
+            const session = faker.datatype.uuid()
+            assessmentService.startBySession.mockResolvedValue({
+                id: 100,
+                session: session,
+                started_at: Date.now(),
+            })
+
+            const res = await request(app)
+                .post(`/api/v1/assessment/${session}/start`)
+                .set('Accept', 'application/json')
+                .expect(200)
+
+            expect(assessmentService.startBySession).toBeCalledTimes(1)
+            expect(assessmentService.startBySession).toBeCalledWith(session)
+            expect(res.body.data).toBe(true)
+        }) // test
+    }) // group
+    describe('GET /assessment/:session/question/:questionId', () => {
+        it('should fail with 404 if assessment is not found or is inactive', async () => {
+            assessmentService.findBySession.mockResolvedValue(undefined)
+            assessmentService.isAccessible.mockReturnValue(false)
+            const session = faker.datatype.uuid()
+            const res = await request(app)
+                .get(`/api/v1/assessment/${session}/question/1`)
+                .set('Accept', 'application/json')
+            expect(assessmentService.findBySession).toBeCalledTimes(1)
+            expect(assessmentService.findBySession).toBeCalledWith(session)
+            expect(examService.getQuestions).toBeCalledTimes(0)
+            expect(res.body).toMatchObject({ status: 404, data: false, })
+            expect(res.status).toEqual(404)
+        }) // test
+        it('should fail with 404 if question is not found', async () => {
+            assessmentService.findBySession.mockResolvedValue({ exam_id: 100 })
+            assessmentService.isAccessible.mockReturnValue(true)
+            examService.getQuestions.mockResolvedValue([ { text: 'i has cheezburgerz' }, { text: 'i has friez'} ])
+            const session = faker.datatype.uuid()
+
+            const res = await request(app)
+                .get(`/api/v1/assessment/${session}/question/3`)
+                .set('Accept', 'application/json')
+                .expect(404)
+
+            expect(res.body).toMatchObject({ status: 404, data: false })
+        }) // test
+        it('should retrieve the first question', async () => {
+            assessmentService.findBySession.mockResolvedValue({ exam_id: 100 })
+            assessmentService.isAccessible.mockReturnValue(true)
+            examService.getQuestions.mockResolvedValue([ { text: 'i has cheezburgerz' }, { text: 'i has friez'} ])
+            const session = faker.datatype.uuid()
+
+            const res = await request(app)
+                .get(`/api/v1/assessment/${session}/question/1`)
+                .set('Accept', 'application/json')
+                .expect(200)
+
+            expect(res.body.data).toEqual({ text: 'i has cheezburgerz' })
+        }) // test
+        it('should retrieve the second question', async () => {
+            assessmentService.findBySession.mockResolvedValue({ exam_id: 100 })
+            assessmentService.isAccessible.mockReturnValue(true)
+            examService.getQuestions.mockResolvedValue([ { text: 'i has cheezburgerz' }, { text: 'i has friez'} ])
+            const session = faker.datatype.uuid()
+
+            const res = await request(app)
+                .get(`/api/v1/assessment/${session}/question/2`)
+                .set('Accept', 'application/json')
+                .expect(200)
+
+            expect(res.body.data).toEqual({ text: 'i has friez' })
+        }) // test
+    }) // group
 }) // group
