@@ -114,4 +114,22 @@ describe('[intgr] services/taker.js', () => {
             expect(res).toBe(true)
         })
     }) // group
+    describe('.submitAnswer()', () => {
+        it('should insert a new Answer record and return the result', async () => {
+            const assessment = await Assessment.query().insertAndFetch({
+                session: faker.datatype.uuid(),
+                exam_id: 1,
+                taker_id: 1,
+            })
+            const answer = await assessmentService.submitAnswer(assessment, {
+                question_id: 123,
+                option_id: 123,
+            })
+            expect(answer).toMatchObject({
+                assessment_id: assessment.id,
+                question_id: '123',
+                option_id: '123',
+            })
+        })
+    }) // group
 }) // group

@@ -81,7 +81,26 @@ const answerSchema = yup.object({
     answeredText: yup.string().min(1).notRequired(),
 })
 router.post('/assessment/:session/answer', async (req, res) => {
-    // todo ...
+    const assessment = await assessmentService.findBySession(req.params.session)
+    if (! assessmentService.isAccessible(assessment)) {
+        return res.yield({ status: 404, message: 'Assessment not found or inactive.'})
+    }
+
+    const input = await answerSchema.validate(req.body, { stripUnknown: true })
+        .then(val => Object.assign({ val }))
+        .catch(err => Object.assign({ err }))
+
+    if (input.err) {
+        return res.yield({ status: 422, message: 'Invalid input.' })
+    }
+
+    await assessmentService.submitAnswer({
+        question_id: input.val.questionId,
+        option_id: input.val.optionId,
+        answered_text: input.val.answeredText,
+    })
+
+    return res.yield({ message: 'success' })
 })
 
 router.post('/assessment/:session/end', async (req, res) => {

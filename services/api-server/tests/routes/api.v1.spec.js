@@ -212,4 +212,71 @@ describe('[unit] API V1', () => {
             expect(res.body.data).toEqual({ text: 'i has friez' })
         }) // test
     }) // group
+    describe('POST /assessment/:session/answer', () => {
+        it('should fail with 404 if assessment is not found or inactive', async () => {
+            assessmentService.findBySession.mockResolvedValue(undefined)
+            assessmentService.isAccessible.mockReturnValue(false)
+            const session = faker.datatype.uuid()
+
+            const res = await request(app)
+                .post(`/api/v1/assessment/${session}/answer`)
+                .send({ questionId: 12345, optionId: 54321 })
+
+            expect(assessmentService.findBySession).toBeCalledTimes(1)
+            expect(assessmentService.findBySession).toBeCalledWith(session)
+            expect(assessmentService.submitAnswer).toBeCalledTimes(0)
+            expect(res.body).toMatchObject({ status: 404, data: false })
+            expect(res.status).toEqual(404)
+        }) // test
+        it('should fail with 404 if assessment is not found or inactive', async () => {
+            assessmentService.findBySession.mockResolvedValue({ exam_id: 100 })
+            assessmentService.isAccessible.mockReturnValue(true)
+            const session = faker.datatype.uuid()
+
+            const res = await request(app)
+                .post(`/api/v1/assessment/${session}/answer`)
+                .send({ optionId: 54321 })
+
+            expect(assessmentService.findBySession).toBeCalledTimes(1)
+            expect(assessmentService.findBySession).toBeCalledWith(session)
+            expect(assessmentService.submitAnswer).toBeCalledTimes(0)
+            expect(res.body).toMatchObject({ status: 422, data: false })
+            expect(res.status).toEqual(422)
+        }) // test
+        it('should submit answer', async () => {
+            const session = faker.datatype.uuid()
+            const answerInput = {
+                questionId: 12345,
+                optionId: 54321,
+            }
+            const assessment = {
+                id: 10,
+                session,
+            }
+            const answerRecord = {
+                assessment_id: assessment.id,
+                question_id: answerInput.questionId,
+                option_id: answerInput.optionId,
+            }
+            assessmentService.findBySession.mockResolvedValue(assessment)
+            assessmentService.isAccessible.mockReturnValue(true)
+            assessmentService.submitAnswer.mockResolvedValue(answerRecord)
+
+            const res = await request(app)
+                .post(`/api/v1/assessment/${session}/answer`)
+                .send(answerInput)
+
+            expect(assessmentService.findBySession).toBeCalledTimes(1)
+            expect(assessmentService.findBySession).toBeCalledWith(session)
+            expect(assessmentService.isAccessible).toBeCalledTimes(1)
+            expect(assessmentService.isAccessible).toBeCalledWith(assessment)
+            expect(assessmentService.submitAnswer).toBeCalledTimes(1)
+            expect(assessmentService.submitAnswer).toBeCalledWith({
+                question_id: answerInput.questionId,
+                option_id: answerInput.optionId,
+            })
+            expect(res.body).toEqual({ status: 200, data: true, message: 'success' })
+            expect(res.status).toEqual(200)
+        }) // test
+    }) // group
 }) // group
