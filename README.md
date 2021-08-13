@@ -17,6 +17,17 @@ Install global packages:
 $ npm i -g pnpm @microsoft/rush@5.50.0
 ```
 
+Customize setup:
+> Copy `.env.example` config file to `.env` and configure, if necessary. Services may also include a `.env.example` config file.
+```sh
+$ cp .env.example .env
+```
+
+Install project modules:
+```sh
+$ rush install
+```
+
 Run dev environment:
 ```sh
 $ docker-compose up
@@ -41,10 +52,6 @@ $ rushx test:unit
 # integration tests
 $ rushx test:intgr
 ```
-
-Customize setup:
-
-Copy the `.env.example` config file, found in the root dir, to `.env` and configure. Services may also include a `.env.example` config file.
 
 ## License
 
